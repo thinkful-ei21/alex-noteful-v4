@@ -24,6 +24,7 @@ app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'common', {
   skip: () => process.env.NODE_ENV === 'test'
 }));
 
+
 // Create a static webserver
 app.use(express.static('public'));
 
