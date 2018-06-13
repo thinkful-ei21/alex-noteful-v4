@@ -9,7 +9,7 @@ const Note = require('../models/note');
 const router = express.Router();
 
 // Protect endpoints using JWT Strategy
-router.use('/', passport.authenticate('jwt', { session: false, failWithError: true }));
+//router.use('/', passport.authenticate('jwt', { session: false, failWithError: true }));
 
 /* ========== GET/READ ALL ITEMS ========== */
 router.get('/', (req, res, next) => {
@@ -136,7 +136,6 @@ router.delete('/:id', (req, res, next) => {
     .catch(err => {
       next(err);
     });
-
 });
 
 module.exports = router;

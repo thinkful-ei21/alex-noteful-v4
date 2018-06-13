@@ -15,7 +15,7 @@ const usersRouter = require('./routes/users');
 const authRouter = require('./routes/auth');
 
 const jwtStrategy = require('./passport/jwt');
-passport.use(jwtStrategy);
+//passport.use(jwtStrategy);
 
 
 

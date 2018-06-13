@@ -8,7 +8,7 @@ const User = require('../models/user');
 const router = express.Router();
 
 // Protect endpoints using JWT Strategy
-router.use('/', passport.authenticate('jwt', { session: false, failWithError: true }));
+//router.use('/', passport.authenticate('jwt', { session: false, failWithError: true }));
 
 router.post('/', (req, res, next) => {
     const { fullname, username, password } = req.body;
@@ -27,18 +27,26 @@ router.post('/', (req, res, next) => {
         err.status = 400;
         return next(err);
       }
-  
-    User.create(newUser)
-      .then(result => {
-        res.location(`${req.originalUrl}/${result.id}`).status(201).json(result);
-      })
-      .catch(err => {
-        if (err.code === 11000) {
-          err = new Error('Username already exists');
-          err.status = 400;
-        }
-        next(err);
-      });
+    
+    User.hashPassword(password)
+      .then(digest => {
+        const newUser = {
+          username,
+          password: digest,
+          fullname
+      };
+      return User.create(newUser);
+    })
+    .then(result => {
+      res.location(`${req.originalUrl}/${result.id}`).status(201).json(result);
+    })
+    .catch(err => {
+      if (err.code === 11000) {
+        err = new Error('Username already exists');
+        err.status = 400;
+      }
+      next(err);
+    });  
   });
 
   module.exports = router;
