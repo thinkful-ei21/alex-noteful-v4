@@ -4,6 +4,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const Note = require('../models/note');
+const Tag = require('../models/tag');
+const Folder = require('../models/folder');
 const passport = require('passport');
 const router = express.Router();
 
@@ -73,6 +75,7 @@ router.post('/', (req, res, next) => {
   const userId = req.user.id;
 
   /***** Never trust users - validate input *****/
+
   if (!title) {
     const err = new Error('Missing `title` in request body');
     err.status = 400;
@@ -112,9 +115,30 @@ router.post('/', (req, res, next) => {
 /* ========== PUT/UPDATE A SINGLE ITEM ========== */
 router.put('/:id', (req, res, next) => {
   const { id } = req.params;
-  const { title, content, folderId, tags = [] } = req.body;
+  const { title, content, folderId, tags } = req.body;
   const userId = req.user.id;
   /***** Never trust users - validate input *****/
+  // if (folderId !== undefined ){
+
+  //   Folder.count({_id: folderId, userId})===0) {
+      
+  //   }
+  // }
+
+  // if (tags !== undefined){
+  //   let count = 0;
+  //   tags.forEach(tag => {
+  //     if (Tag.find({userId},{_id}).includes({_id: tag})) {
+  //       count++;
+  //     }
+  //   })
+  //   if(count !== tags.length) {
+  //     const err = new Error('`tag id` is not valid');
+  //     err.status = 400;
+  //     return next(err);
+  //   }
+  // }
+
   if (!mongoose.Types.ObjectId.isValid(id)) {
     const err = new Error('The `id` is not valid');
     err.status = 400;
@@ -144,8 +168,7 @@ router.put('/:id', (req, res, next) => {
 
   const updateNote = { title, content, folderId, tags };
 
-  Note.findOne({_id: id, userId})
-    .update(updateNote, { new: true })
+  Note.findOneAndUpdate({_id: id, userId}, updateNote, { new: true })
     .then(result => {
       if (result) {
         res.json(result);
